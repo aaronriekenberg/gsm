@@ -134,3 +134,49 @@ func TestLoadAndDelete(t *testing.T) {
 	}
 
 }
+
+func TestDelete(t *testing.T) {
+	var gsm GenericSyncMap[int, string]
+
+	gsm.Store(1, "one")
+
+	tests := map[string]struct {
+		key               int
+		initialValue      string
+		initialLoadOK     bool
+		afterDeleteValue  string
+		afterDeleteLoadOK bool
+	}{
+		"first load": {key: 1, initialValue: "one", initialLoadOK: true, afterDeleteValue: "", afterDeleteLoadOK: false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			value, ok := gsm.Load(tc.key)
+
+			diff := cmp.Diff(tc.initialValue, value)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.initialLoadOK, ok)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			gsm.Delete(tc.key)
+
+			value, ok = gsm.Load(tc.key)
+
+			diff = cmp.Diff(tc.afterDeleteValue, value)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.afterDeleteLoadOK, ok)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+		})
+	}
+}
