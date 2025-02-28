@@ -9,14 +9,6 @@ type GenericSyncMap[K comparable, V any] struct {
 	syncMap sync.Map
 }
 
-func (gsm *GenericSyncMap[K, V]) Store(
-	key K,
-	value V,
-) {
-
-	gsm.syncMap.Store(key, value)
-}
-
 func (gsm *GenericSyncMap[K, V]) Load(
 	key K,
 ) (value V, ok bool) {
@@ -28,6 +20,32 @@ func (gsm *GenericSyncMap[K, V]) Load(
 
 	value = anyValue.(V)
 
+	return
+}
+
+func (gsm *GenericSyncMap[K, V]) Store(
+	key K,
+	value V,
+) {
+
+	gsm.syncMap.Store(key, value)
+}
+
+func (gsm *GenericSyncMap[K, V]) Clear() {
+	gsm.syncMap.Clear()
+}
+
+func (gsm *GenericSyncMap[K, V]) LoadOrStore(
+	key K,
+	value V,
+) (actual V, loaded bool) {
+	actualAny, loaded := gsm.syncMap.LoadOrStore(key, value)
+
+	if !loaded {
+		return
+	}
+
+	actual = actualAny.(V)
 	return
 }
 
@@ -43,6 +61,12 @@ func (gsm *GenericSyncMap[K, V]) LoadAndDelete(
 
 	value = anyValue.(V)
 	return
+}
+
+func (gsm *GenericSyncMap[K, V]) Delete(
+	key K,
+) {
+	gsm.syncMap.Delete(key)
 }
 
 func (gsm *GenericSyncMap[K, V]) Range() iter.Seq2[K, V] {
