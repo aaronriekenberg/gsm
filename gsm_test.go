@@ -394,7 +394,7 @@ func TestRange(t *testing.T) {
 				} else if kv1.Key == kv2.Key {
 					return 0
 				} else {
-					return 0
+					return 1
 				}
 			})
 
