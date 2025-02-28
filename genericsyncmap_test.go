@@ -180,3 +180,49 @@ func TestDelete(t *testing.T) {
 		})
 	}
 }
+
+func TestSwap(t *testing.T) {
+	var gsm GenericSyncMap[int, string]
+
+	gsm.Store(1, "one")
+
+	tests := map[string]struct {
+		key             int
+		value           string
+		wantPrevious    string
+		wantLoaded      bool
+		afterSwapValue  string
+		afterSwapLoadOK bool
+	}{
+		"first swap": {key: 1, value: "updatedOne", wantPrevious: "one", wantLoaded: true, afterSwapValue: "updatedOne", afterSwapLoadOK: true},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			previous, loaded := gsm.Swap(tc.key, tc.value)
+
+			diff := cmp.Diff(tc.wantPrevious, previous)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.wantLoaded, loaded)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			afterSwapValue, afterSwapLoaded := gsm.Load(tc.key)
+
+			diff = cmp.Diff(tc.afterSwapValue, afterSwapValue)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.afterSwapLoadOK, afterSwapLoaded)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+		})
+	}
+}

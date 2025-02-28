@@ -69,6 +69,20 @@ func (gsm *GenericSyncMap[K, V]) Delete(
 	gsm.syncMap.Delete(key)
 }
 
+func (gsm *GenericSyncMap[K, V]) Swap(
+	key K,
+	value V,
+) (previous V, loaded bool) {
+	previousAny, loaded := gsm.syncMap.Swap(key, value)
+
+	if !loaded {
+		return
+	}
+
+	previous = previousAny.(V)
+	return
+}
+
 func (gsm *GenericSyncMap[K, V]) Range() iter.Seq2[K, V] {
 
 	return func(yield func(K, V) bool) {
