@@ -77,13 +77,15 @@ func TestClear(t *testing.T) {
 func TestLoadOrStore(t *testing.T) {
 
 	tests := map[string]struct {
-		key        int
-		value      string
-		wantActual string
-		wantLoaded bool
+		key                    int
+		value                  string
+		wantActual             string
+		wantLoaded             bool
+		afterLoadOrStoreValue  string
+		afterLoadOrStoreLoadOK bool
 	}{
-		"existing key": {key: 1, value: "one", wantActual: "one", wantLoaded: true},
-		"new key":      {key: 2, value: "two", wantActual: "", wantLoaded: false},
+		"existing key": {key: 1, value: "notOne", wantActual: "one", wantLoaded: true, afterLoadOrStoreValue: "one", afterLoadOrStoreLoadOK: true},
+		"new key":      {key: 2, value: "two", wantActual: "", wantLoaded: false, afterLoadOrStoreValue: "two", afterLoadOrStoreLoadOK: true},
 	}
 
 	for name, tc := range tests {
@@ -101,6 +103,18 @@ func TestLoadOrStore(t *testing.T) {
 			}
 
 			diff = cmp.Diff(tc.wantLoaded, loaded)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			afterLoadOrStoreValue, afterLoadOrStoreLoadOK := gsm.Load(tc.key)
+
+			diff = cmp.Diff(tc.afterLoadOrStoreValue, afterLoadOrStoreValue)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.afterLoadOrStoreLoadOK, afterLoadOrStoreLoadOK)
 			if diff != "" {
 				t.Fatal(diff)
 			}
