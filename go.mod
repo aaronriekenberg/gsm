@@ -1,4 +1,4 @@
-module github.com/aaronriekenberg/genericsyncmap
+module github.com/aaronriekenberg/gsm
 
 go 1.24.0
 

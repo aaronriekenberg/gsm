@@ -1,4 +1,4 @@
-package genericsyncmap
+package gsm
 
 import (
 	"slices"
