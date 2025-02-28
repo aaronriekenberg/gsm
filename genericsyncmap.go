@@ -6,7 +6,6 @@ import (
 )
 
 // GenericSyncMap is like sync.Map with generic key and value types K and V.
-//
 // The zero GenericSyncMap is empty and ready for use.
 // A GenericSyncMap must not be copied after first use.
 type GenericSyncMap[K comparable, V any] struct {
@@ -51,6 +50,7 @@ func (gsm *GenericSyncMap[K, V]) LoadOrStore(
 	key K,
 	value V,
 ) (actual V, loaded bool) {
+
 	actualAny, loaded := gsm.syncMap.LoadOrStore(key, value)
 
 	if !loaded {
@@ -90,6 +90,7 @@ func (gsm *GenericSyncMap[K, V]) Swap(
 	key K,
 	value V,
 ) (previous V, loaded bool) {
+
 	previousAny, loaded := gsm.syncMap.Swap(key, value)
 
 	if !loaded {

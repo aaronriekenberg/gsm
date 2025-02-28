@@ -418,6 +418,7 @@ func TestKeys(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
 			var gsm GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
