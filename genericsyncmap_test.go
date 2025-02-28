@@ -1,9 +1,11 @@
 package genericsyncmap
 
 import (
+	"cmp"
+	"slices"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	gocmp "github.com/google/go-cmp/cmp"
 )
 
 func TestLoad(t *testing.T) {
@@ -25,12 +27,12 @@ func TestLoad(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			value, ok := gsm.Load(tc.key)
 
-			diff := cmp.Diff(tc.wantValue, value)
+			diff := gocmp.Diff(tc.wantValue, value)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.wantOK, ok)
+			diff = gocmp.Diff(tc.wantOK, ok)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -58,12 +60,12 @@ func TestClear(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			value, ok := gsm.Load(tc.key)
 
-			diff := cmp.Diff(tc.wantValue, value)
+			diff := gocmp.Diff(tc.wantValue, value)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.wantOK, ok)
+			diff = gocmp.Diff(tc.wantOK, ok)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -89,12 +91,12 @@ func TestLoadOrStore(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			actual, loaded := gsm.LoadOrStore(tc.key, tc.value)
 
-			diff := cmp.Diff(tc.wantActual, actual)
+			diff := gocmp.Diff(tc.wantActual, actual)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.wantLoaded, loaded)
+			diff = gocmp.Diff(tc.wantLoaded, loaded)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -121,12 +123,12 @@ func TestLoadAndDelete(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			value, loaded := gsm.LoadAndDelete(tc.key)
 
-			diff := cmp.Diff(tc.wantValue, value)
+			diff := gocmp.Diff(tc.wantValue, value)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.wantLoaded, loaded)
+			diff = gocmp.Diff(tc.wantLoaded, loaded)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -154,12 +156,12 @@ func TestDelete(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			value, ok := gsm.Load(tc.key)
 
-			diff := cmp.Diff(tc.initialValue, value)
+			diff := gocmp.Diff(tc.initialValue, value)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.initialLoadOK, ok)
+			diff = gocmp.Diff(tc.initialLoadOK, ok)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -168,12 +170,12 @@ func TestDelete(t *testing.T) {
 
 			value, ok = gsm.Load(tc.key)
 
-			diff = cmp.Diff(tc.afterDeleteValue, value)
+			diff = gocmp.Diff(tc.afterDeleteValue, value)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.afterDeleteLoadOK, ok)
+			diff = gocmp.Diff(tc.afterDeleteLoadOK, ok)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -202,24 +204,24 @@ func TestSwap(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			previous, loaded := gsm.Swap(tc.key, tc.value)
 
-			diff := cmp.Diff(tc.wantPrevious, previous)
+			diff := gocmp.Diff(tc.wantPrevious, previous)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.wantLoaded, loaded)
+			diff = gocmp.Diff(tc.wantLoaded, loaded)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
 			afterSwapValue, afterSwapLoaded := gsm.Load(tc.key)
 
-			diff = cmp.Diff(tc.afterSwapValue, afterSwapValue)
+			diff = gocmp.Diff(tc.afterSwapValue, afterSwapValue)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.afterSwapLoadOK, afterSwapLoaded)
+			diff = gocmp.Diff(tc.afterSwapLoadOK, afterSwapLoaded)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -253,19 +255,19 @@ func TestCompareAndSwap(t *testing.T) {
 
 			swapped := gsm.CompareAndSwap(tc.key, tc.oldValue, tc.newValue)
 
-			diff := cmp.Diff(tc.wantSwapped, swapped)
+			diff := gocmp.Diff(tc.wantSwapped, swapped)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
 			afterSwapValue, afterSwapLoaded := gsm.Load(tc.key)
 
-			diff = cmp.Diff(tc.afterSwapValue, afterSwapValue)
+			diff = gocmp.Diff(tc.afterSwapValue, afterSwapValue)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.afterSwapLoadOK, afterSwapLoaded)
+			diff = gocmp.Diff(tc.afterSwapLoadOK, afterSwapLoaded)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -298,19 +300,91 @@ func TestCompareAndDelete(t *testing.T) {
 
 			deleted := gsm.CompareAndDelete(tc.key, tc.oldValue)
 
-			diff := cmp.Diff(tc.wantDeleted, deleted)
+			diff := gocmp.Diff(tc.wantDeleted, deleted)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
 			afterDeleteValue, afterDeleteLoadOK := gsm.Load(tc.key)
 
-			diff = cmp.Diff(tc.afterDeleteValue, afterDeleteValue)
+			diff = gocmp.Diff(tc.afterDeleteValue, afterDeleteValue)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.afterDeleteLoadOK, afterDeleteLoadOK)
+			diff = gocmp.Diff(tc.afterDeleteLoadOK, afterDeleteLoadOK)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+		})
+	}
+}
+
+func TestRange(t *testing.T) {
+
+	var gsm GenericSyncMap[int, string]
+
+	gsm.Store(1, "one")
+	gsm.Store(2, "two")
+	gsm.Store(3, "three")
+	gsm.Store(4, "four")
+	gsm.Store(5, "five")
+
+	type keyValue struct {
+		Key   int
+		Value string
+	}
+
+	tests := map[string]struct {
+		name            string
+		wantSortedRange []keyValue
+	}{
+		"range": {
+			wantSortedRange: []keyValue{
+				{
+					Key:   1,
+					Value: "one",
+				},
+				{
+					Key:   2,
+					Value: "two",
+				},
+				{
+					Key:   3,
+					Value: "three",
+				},
+				{
+					Key:   4,
+					Value: "four",
+				},
+				{
+					Key:   5,
+					Value: "five",
+				},
+			},
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			var sortedRange []keyValue
+
+			for key, value := range gsm.Range() {
+				sortedRange = append(sortedRange, keyValue{
+					Key:   key,
+					Value: value,
+				})
+			}
+
+			slices.SortFunc(sortedRange, func(kv1, kv2 keyValue) int {
+				return cmp.Or(
+					cmp.Compare(kv1.Key, kv2.Key),
+					cmp.Compare(kv1.Value, kv2.Value),
+				)
+			})
+
+			diff := gocmp.Diff(tc.wantSortedRange, sortedRange)
 			if diff != "" {
 				t.Fatal(diff)
 			}
