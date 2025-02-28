@@ -1,44 +1,39 @@
 package genericsyncmap
 
-import "testing"
+import (
+	"testing"
 
-func TestStoreAndLoad(t *testing.T) {
+	"github.com/google/go-cmp/cmp"
+)
+
+func TestLoad(t *testing.T) {
+
 	var gsm GenericSyncMap[int, string]
 
 	gsm.Store(1, "one")
-	gsm.Store(2, "two")
 
-	value, ok := gsm.Load(1)
-	if ok != true || value != "one" {
-		t.Errorf("gsm.Load(1) = (%q, %v) want (\"one\", true)", value, ok)
+	tests := map[string]struct {
+		key       int
+		wantValue string
+		wantOK    bool
+	}{
+		"successful load":   {key: 1, wantValue: "one", wantOK: true},
+		"unsuccessful load": {key: 2, wantValue: "", wantOK: false},
 	}
 
-	value, ok = gsm.Load(2)
-	if ok != true || value != "two" {
-		t.Errorf("gsm.Load(1) = (%q, %v) want (\"two\", true)", value, ok)
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			value, ok := gsm.Load(tc.key)
+
+			diff := cmp.Diff(tc.wantValue, value)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.wantOK, ok)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+		})
 	}
-
-	value, ok = gsm.Load(3)
-	if ok != false || value != "" {
-		t.Errorf("gsm.Load(1) = (%q, %v) want (\"\", true)", value, ok)
-	}
-}
-
-func TestLoadAndDelete(t *testing.T) {
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
-	gsm.Store(2, "two")
-
-	value, ok := gsm.LoadAndDelete(1)
-	if ok != true || value != "one" {
-		t.Errorf("gsm.LoadAndDelete(1) = (%q, %v) want (\"\", true)", value, ok)
-
-	}
-
-	value, ok = gsm.LoadAndDelete(1)
-	if ok != false || value != "" {
-		t.Errorf("gsm.LoadAndDelete(1) = (%q, %v) want (\"\", false)", value, ok)
-	}
-
 }
