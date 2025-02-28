@@ -428,3 +428,42 @@ func TestKeys(t *testing.T) {
 		})
 	}
 }
+
+func TestValues(t *testing.T) {
+
+	var gsm GenericSyncMap[int, string]
+
+	gsm.Store(1, "one")
+	gsm.Store(2, "two")
+	gsm.Store(3, "three")
+	gsm.Store(4, "four")
+	gsm.Store(5, "five")
+
+	wantSortedValues := []string{"one", "two", "three", "four", "five"}
+	slices.Sort(wantSortedValues)
+
+	tests := map[string]struct {
+		name             string
+		wantSortedValues []string
+	}{
+		"range": {wantSortedValues: wantSortedValues},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			var sortedValues []string
+
+			for key := range gsm.Values() {
+				sortedValues = append(sortedValues, key)
+			}
+
+			slices.Sort(sortedValues)
+
+			diff := gocmp.Diff(tc.wantSortedValues, sortedValues)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+		})
+	}
+}
