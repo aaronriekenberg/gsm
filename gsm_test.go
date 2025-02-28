@@ -112,12 +112,14 @@ func TestLoadOrStore(t *testing.T) {
 func TestLoadAndDelete(t *testing.T) {
 
 	tests := map[string]struct {
-		key        int
-		wantValue  string
-		wantLoaded bool
+		key               int
+		wantValue         string
+		wantLoaded        bool
+		afterDeleteValue  string
+		afterDeleteLoadOK bool
 	}{
-		"existing key": {key: 1, wantValue: "one", wantLoaded: true},
-		"unknown key":  {key: 2, wantValue: "", wantLoaded: false},
+		"existing key": {key: 1, wantValue: "one", wantLoaded: true, afterDeleteValue: "", afterDeleteLoadOK: false},
+		"unknown key":  {key: 2, wantValue: "", wantLoaded: false, afterDeleteValue: "", afterDeleteLoadOK: false},
 	}
 
 	for name, tc := range tests {
@@ -135,6 +137,18 @@ func TestLoadAndDelete(t *testing.T) {
 			}
 
 			diff = cmp.Diff(tc.wantLoaded, loaded)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			afterDeleteValue, afterDeleteLoadOK := gsm.Load(tc.key)
+
+			diff = cmp.Diff(tc.afterDeleteValue, afterDeleteValue)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.afterDeleteLoadOK, afterDeleteLoadOK)
 			if diff != "" {
 				t.Fatal(diff)
 			}
@@ -176,14 +190,14 @@ func TestDelete(t *testing.T) {
 
 			gsm.Delete(tc.key)
 
-			value, ok = gsm.Load(tc.key)
+			afterDeleteValue, afterDeleteLoadOK := gsm.Load(tc.key)
 
-			diff = cmp.Diff(tc.afterDeleteValue, value)
+			diff = cmp.Diff(tc.afterDeleteValue, afterDeleteValue)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			diff = cmp.Diff(tc.afterDeleteLoadOK, ok)
+			diff = cmp.Diff(tc.afterDeleteLoadOK, afterDeleteLoadOK)
 			if diff != "" {
 				t.Fatal(diff)
 			}
