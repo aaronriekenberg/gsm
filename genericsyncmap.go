@@ -5,7 +5,10 @@ import (
 	"sync"
 )
 
-// GenericSyncMap is like sync.Map by with generic key and value types K and V.
+// GenericSyncMap is like sync.Map with generic key and value types K and V.
+//
+// The zero GenericSyncMap is empty and ready for use.
+// A GenericSyncMap must not be copied after first use.
 type GenericSyncMap[K comparable, V any] struct {
 	syncMap sync.Map
 }
