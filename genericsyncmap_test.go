@@ -229,7 +229,6 @@ func TestSwap(t *testing.T) {
 }
 
 func TestCompareAndSwap(t *testing.T) {
-	var gsm GenericSyncMap[int, string]
 
 	tests := map[string]struct {
 		key             int
@@ -246,6 +245,10 @@ func TestCompareAndSwap(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			// Store a new value at beginning of each test
 			gsm.Store(1, "one")
 
 			swapped := gsm.CompareAndSwap(tc.key, tc.oldValue, tc.newValue)
@@ -263,6 +266,51 @@ func TestCompareAndSwap(t *testing.T) {
 			}
 
 			diff = cmp.Diff(tc.afterSwapLoadOK, afterSwapLoaded)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+		})
+	}
+}
+
+func TestCompareAndDelete(t *testing.T) {
+
+	tests := map[string]struct {
+		key               int
+		oldValue          string
+		wantDeleted       bool
+		afterDeleteValue  string
+		afterDeleteLoadOK bool
+	}{
+		"existing key and value":           {key: 1, oldValue: "one", wantDeleted: true, afterDeleteValue: "", afterDeleteLoadOK: false},
+		"existing key and non-equal value": {key: 1, oldValue: "badone", wantDeleted: false, afterDeleteValue: "one", afterDeleteLoadOK: true},
+		"non existing key":                 {key: 2, oldValue: "", wantDeleted: false, afterDeleteValue: "", afterDeleteLoadOK: false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			// Store a new value at beginning of each test
+			gsm.Store(1, "one")
+
+			deleted := gsm.CompareAndDelete(tc.key, tc.oldValue)
+
+			diff := cmp.Diff(tc.wantDeleted, deleted)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			afterDeleteValue, afterDeleteLoadOK := gsm.Load(tc.key)
+
+			diff = cmp.Diff(tc.afterDeleteValue, afterDeleteValue)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.afterDeleteLoadOK, afterDeleteLoadOK)
 			if diff != "" {
 				t.Fatal(diff)
 			}
