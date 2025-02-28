@@ -9,10 +9,6 @@ import (
 
 func TestLoad(t *testing.T) {
 
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
-
 	tests := map[string]struct {
 		key       int
 		wantValue string
@@ -24,6 +20,11 @@ func TestLoad(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+
 			value, ok := gsm.Load(tc.key)
 
 			diff := cmp.Diff(tc.wantValue, value)
@@ -41,12 +42,6 @@ func TestLoad(t *testing.T) {
 
 func TestClear(t *testing.T) {
 
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
-
-	gsm.Clear()
-
 	tests := map[string]struct {
 		key       int
 		wantValue string
@@ -57,6 +52,13 @@ func TestClear(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+
+			gsm.Clear()
+
 			value, ok := gsm.Load(tc.key)
 
 			diff := cmp.Diff(tc.wantValue, value)
@@ -73,7 +75,6 @@ func TestClear(t *testing.T) {
 }
 
 func TestLoadOrStore(t *testing.T) {
-	var gsm GenericSyncMap[int, string]
 
 	tests := map[string]struct {
 		key        int
@@ -81,13 +82,17 @@ func TestLoadOrStore(t *testing.T) {
 		wantActual string
 		wantLoaded bool
 	}{
-		"first store":   {key: 1, value: "one", wantActual: "", wantLoaded: false},
-		"second load":   {key: 1, value: "one", wantActual: "one", wantLoaded: true},
-		"new key store": {key: 2, value: "two", wantActual: "", wantLoaded: false},
+		"existing key": {key: 1, value: "one", wantActual: "one", wantLoaded: true},
+		"new key":      {key: 2, value: "two", wantActual: "", wantLoaded: false},
 	}
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+
 			actual, loaded := gsm.LoadOrStore(tc.key, tc.value)
 
 			diff := cmp.Diff(tc.wantActual, actual)
@@ -105,21 +110,23 @@ func TestLoadOrStore(t *testing.T) {
 }
 
 func TestLoadAndDelete(t *testing.T) {
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
 
 	tests := map[string]struct {
 		key        int
 		wantValue  string
 		wantLoaded bool
 	}{
-		"first load":  {key: 1, wantValue: "one", wantLoaded: true},
-		"second load": {key: 1, wantValue: "", wantLoaded: false},
+		"existing key": {key: 1, wantValue: "one", wantLoaded: true},
+		"unknown key":  {key: 2, wantValue: "", wantLoaded: false},
 	}
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+
 			value, loaded := gsm.LoadAndDelete(tc.key)
 
 			diff := cmp.Diff(tc.wantValue, value)
@@ -137,9 +144,6 @@ func TestLoadAndDelete(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
 
 	tests := map[string]struct {
 		key               int
@@ -153,6 +157,11 @@ func TestDelete(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+
 			value, ok := gsm.Load(tc.key)
 
 			diff := cmp.Diff(tc.initialValue, value)
@@ -183,9 +192,6 @@ func TestDelete(t *testing.T) {
 }
 
 func TestSwap(t *testing.T) {
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
 
 	tests := map[string]struct {
 		key             int
@@ -201,6 +207,11 @@ func TestSwap(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+
 			previous, loaded := gsm.Swap(tc.key, tc.value)
 
 			diff := cmp.Diff(tc.wantPrevious, previous)
@@ -322,14 +333,6 @@ func TestCompareAndDelete(t *testing.T) {
 
 func TestRange(t *testing.T) {
 
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
-	gsm.Store(2, "two")
-	gsm.Store(3, "three")
-	gsm.Store(4, "four")
-	gsm.Store(5, "five")
-
 	type keyValue struct {
 		Key   int
 		Value string
@@ -367,6 +370,15 @@ func TestRange(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+			gsm.Store(2, "two")
+			gsm.Store(3, "three")
+			gsm.Store(4, "four")
+			gsm.Store(5, "five")
+
 			var sortedRange []keyValue
 
 			for key, value := range gsm.Range() {
@@ -397,14 +409,6 @@ func TestRange(t *testing.T) {
 
 func TestKeys(t *testing.T) {
 
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
-	gsm.Store(2, "two")
-	gsm.Store(3, "three")
-	gsm.Store(4, "four")
-	gsm.Store(5, "five")
-
 	tests := map[string]struct {
 		name           string
 		wantSortedKeys []int
@@ -414,6 +418,14 @@ func TestKeys(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+			gsm.Store(2, "two")
+			gsm.Store(3, "three")
+			gsm.Store(4, "four")
+			gsm.Store(5, "five")
+
 			var sortedKeys []int
 
 			for key := range gsm.Keys() {
@@ -433,14 +445,6 @@ func TestKeys(t *testing.T) {
 
 func TestValues(t *testing.T) {
 
-	var gsm GenericSyncMap[int, string]
-
-	gsm.Store(1, "one")
-	gsm.Store(2, "two")
-	gsm.Store(3, "three")
-	gsm.Store(4, "four")
-	gsm.Store(5, "five")
-
 	wantSortedValues := []string{"one", "two", "three", "four", "five"}
 	slices.Sort(wantSortedValues)
 
@@ -453,6 +457,15 @@ func TestValues(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+
+			var gsm GenericSyncMap[int, string]
+
+			gsm.Store(1, "one")
+			gsm.Store(2, "two")
+			gsm.Store(3, "three")
+			gsm.Store(4, "four")
+			gsm.Store(5, "five")
+
 			var sortedValues []string
 
 			for key := range gsm.Values() {
