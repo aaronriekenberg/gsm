@@ -333,37 +333,17 @@ func TestCompareAndDelete(t *testing.T) {
 
 func TestRange(t *testing.T) {
 
-	type keyValue struct {
-		Key   int
-		Value string
-	}
-
 	tests := map[string]struct {
-		name            string
-		wantSortedRange []keyValue
+		name         string
+		wantRangeKVs map[int]string
 	}{
 		"range": {
-			wantSortedRange: []keyValue{
-				{
-					Key:   1,
-					Value: "one",
-				},
-				{
-					Key:   2,
-					Value: "two",
-				},
-				{
-					Key:   3,
-					Value: "three",
-				},
-				{
-					Key:   4,
-					Value: "four",
-				},
-				{
-					Key:   5,
-					Value: "five",
-				},
+			wantRangeKVs: map[int]string{
+				1: "one",
+				2: "two",
+				3: "three",
+				4: "four",
+				5: "five",
 			},
 		},
 	}
@@ -379,26 +359,13 @@ func TestRange(t *testing.T) {
 			gsm.Store(4, "four")
 			gsm.Store(5, "five")
 
-			var sortedRange []keyValue
+			rangeKVs := make(map[int]string)
 
 			for key, value := range gsm.Range() {
-				sortedRange = append(sortedRange, keyValue{
-					Key:   key,
-					Value: value,
-				})
+				rangeKVs[key] = value
 			}
 
-			slices.SortFunc(sortedRange, func(kv1, kv2 keyValue) int {
-				if kv1.Key < kv2.Key {
-					return -1
-				} else if kv1.Key == kv2.Key {
-					return 0
-				} else {
-					return 1
-				}
-			})
-
-			diff := cmp.Diff(tc.wantSortedRange, sortedRange)
+			diff := cmp.Diff(tc.wantRangeKVs, rangeKVs)
 			if diff != "" {
 				t.Fatal(diff)
 			}
