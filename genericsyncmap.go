@@ -83,6 +83,16 @@ func (gsm *GenericSyncMap[K, V]) Swap(
 	return
 }
 
+func (gsm *GenericSyncMap[K, V]) CompareAndSwap(
+	key K,
+	old V,
+	new V,
+) (swapped bool) {
+
+	swapped = gsm.syncMap.CompareAndSwap(key, old, new)
+	return
+}
+
 func (gsm *GenericSyncMap[K, V]) Range() iter.Seq2[K, V] {
 
 	return func(yield func(K, V) bool) {

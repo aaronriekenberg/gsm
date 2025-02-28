@@ -194,7 +194,8 @@ func TestSwap(t *testing.T) {
 		afterSwapValue  string
 		afterSwapLoadOK bool
 	}{
-		"first swap": {key: 1, value: "updatedOne", wantPrevious: "one", wantLoaded: true, afterSwapValue: "updatedOne", afterSwapLoadOK: true},
+		"existing key": {key: 1, value: "updatedOne", wantPrevious: "one", wantLoaded: true, afterSwapValue: "updatedOne", afterSwapLoadOK: true},
+		"unknown key":  {key: 2, value: "updatedTwo", wantPrevious: "", wantLoaded: false, afterSwapValue: "updatedTwo", afterSwapLoadOK: true},
 	}
 
 	for name, tc := range tests {
@@ -207,6 +208,49 @@ func TestSwap(t *testing.T) {
 			}
 
 			diff = cmp.Diff(tc.wantLoaded, loaded)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			afterSwapValue, afterSwapLoaded := gsm.Load(tc.key)
+
+			diff = cmp.Diff(tc.afterSwapValue, afterSwapValue)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+			diff = cmp.Diff(tc.afterSwapLoadOK, afterSwapLoaded)
+			if diff != "" {
+				t.Fatal(diff)
+			}
+
+		})
+	}
+}
+
+func TestCompareAndSwap(t *testing.T) {
+	var gsm GenericSyncMap[int, string]
+
+	tests := map[string]struct {
+		key             int
+		oldValue        string
+		newValue        string
+		wantSwapped     bool
+		afterSwapValue  string
+		afterSwapLoadOK bool
+	}{
+		"existing key and value":              {key: 1, oldValue: "one", newValue: "updatedOne", wantSwapped: true, afterSwapValue: "updatedOne", afterSwapLoadOK: true},
+		"existing key not equal value":        {key: 1, oldValue: "badone", newValue: "updatedOne", wantSwapped: false, afterSwapValue: "one", afterSwapLoadOK: true},
+		"not existing key not existing value": {key: 2, oldValue: "test", newValue: "updatedTest", wantSwapped: false, afterSwapValue: "", afterSwapLoadOK: false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			gsm.Store(1, "one")
+
+			swapped := gsm.CompareAndSwap(tc.key, tc.oldValue, tc.newValue)
+
+			diff := cmp.Diff(tc.wantSwapped, swapped)
 			if diff != "" {
 				t.Fatal(diff)
 			}
