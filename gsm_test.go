@@ -1,8 +1,10 @@
-package gsm
+package gsm_test
 
 import (
 	"slices"
 	"testing"
+
+	"github.com/aaronriekenberg/gsm"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -21,7 +23,7 @@ func TestLoad(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 
@@ -53,7 +55,7 @@ func TestClear(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 
@@ -91,7 +93,7 @@ func TestLoadOrStore(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 
@@ -139,7 +141,7 @@ func TestLoadAndDelete(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 
@@ -186,7 +188,7 @@ func TestDelete(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 
@@ -236,7 +238,7 @@ func TestSwap(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 
@@ -286,7 +288,7 @@ func TestCompareAndSwap(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			// Store a new value at beginning of each test
 			gsm.Store(1, "one")
@@ -331,7 +333,7 @@ func TestCompareAndDelete(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			// Store a new value at beginning of each test
 			gsm.Store(1, "one")
@@ -379,7 +381,7 @@ func TestRange(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 			gsm.Store(2, "two")
@@ -414,7 +416,7 @@ func TestKeys(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 			gsm.Store(2, "two")
@@ -454,7 +456,7 @@ func TestValues(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm GenericSyncMap[int, string]
+			var gsm gsm.GenericSyncMap[int, string]
 
 			gsm.Store(1, "one")
 			gsm.Store(2, "two")
