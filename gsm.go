@@ -134,10 +134,11 @@ func (gsm *GenericSyncMap[K, V]) Range() iter.Seq2[K, V] {
 	return func(yield func(K, V) bool) {
 
 		for anyKey, anyValue := range gsm.syncMap.Range {
-			key := anyKey.(K)
-			value := anyValue.(V)
 
-			if !yield(key, value) {
+			if !yield(
+				anyKey.(K),
+				anyValue.(V),
+			) {
 				break
 			}
 		}
@@ -150,9 +151,8 @@ func (gsm *GenericSyncMap[K, V]) Keys() iter.Seq[K] {
 	return func(yield func(K) bool) {
 
 		for anyKey, _ := range gsm.syncMap.Range {
-			key := anyKey.(K)
 
-			if !yield(key) {
+			if !yield(anyKey.(K)) {
 				break
 			}
 		}
@@ -165,9 +165,8 @@ func (gsm *GenericSyncMap[K, V]) Values() iter.Seq[V] {
 	return func(yield func(V) bool) {
 
 		for _, anyValue := range gsm.syncMap.Range {
-			value := anyValue.(V)
 
-			if !yield(value) {
+			if !yield(anyValue.(V)) {
 				break
 			}
 		}
