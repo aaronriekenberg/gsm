@@ -1,6 +1,7 @@
 package gsm_test
 
 import (
+	"fmt"
 	"slices"
 	"testing"
 
@@ -8,6 +9,27 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 )
+
+func ExampleGenericSyncMap() {
+	var gsm gsm.GenericSyncMap[int, string]
+
+	gsm.Store(1, "one")
+
+	value, ok := gsm.Load(1)
+	fmt.Printf("value = %q ok = %v\n", value, ok)
+
+	value, ok = gsm.Load(2)
+	fmt.Printf("value = %q ok = %v\n", value, ok)
+
+	swapped := gsm.CompareAndSwap(1, "one", "updatedOne")
+	value, ok = gsm.Load(1)
+	fmt.Printf("swapped = %v value = %q ok = %v\n", swapped, value, ok)
+
+	// Output:
+	// value = "one" ok = true
+	// value = "" ok = false
+	// swapped = true value = "updatedOne" ok = true
+}
 
 func TestLoad(t *testing.T) {
 
