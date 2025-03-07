@@ -312,7 +312,6 @@ func TestCompareAndSwap(t *testing.T) {
 
 			var gsm gsm.GenericSyncMap[int, string]
 
-			// Store a new value at beginning of each test
 			gsm.Store(1, "one")
 
 			swapped := gsm.CompareAndSwap(tc.key, tc.oldValue, tc.newValue)
@@ -357,7 +356,6 @@ func TestCompareAndDelete(t *testing.T) {
 
 			var gsm gsm.GenericSyncMap[int, string]
 
-			// Store a new value at beginning of each test
 			gsm.Store(1, "one")
 
 			deleted := gsm.CompareAndDelete(tc.key, tc.oldValue)
