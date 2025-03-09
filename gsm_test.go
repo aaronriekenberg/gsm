@@ -11,24 +11,41 @@ import (
 )
 
 func ExampleGenericSyncMap() {
-	var gsm gsm.GenericSyncMap[int, string]
 
-	gsm.Store(1, "one")
+	type name string
 
-	value, ok := gsm.Load(1)
-	fmt.Printf("value = %q ok = %v\n", value, ok)
+	type person struct {
+		title string
+		age   int
+	}
 
-	value, ok = gsm.Load(2)
-	fmt.Printf("value = %q ok = %v\n", value, ok)
+	var gsm gsm.GenericSyncMap[name, person]
 
-	swapped := gsm.CompareAndSwap(1, "one", "updatedOne")
-	value, ok = gsm.Load(1)
-	fmt.Printf("swapped = %v value = %q ok = %v\n", swapped, value, ok)
+	gsm.Store("alice", person{title: "engineer", age: 25})
+	gsm.Store("bob", person{title: "manager", age: 35})
+
+	value, ok := gsm.Load("alice")
+	fmt.Printf("alice value = %+v ok = %v\n", value, ok)
+	fmt.Printf("alice title = %q\n", value.title)
+
+	value, ok = gsm.Load("bob")
+	fmt.Printf("bob value = %+v ok = %v\n", value, ok)
+	fmt.Printf("bob age = %v\n", value.age)
+
+	swapped := gsm.CompareAndSwap(
+		"alice",
+		person{title: "engineer", age: 25},
+		person{title: "manager", age: 25},
+	)
+	value, ok = gsm.Load("alice")
+	fmt.Printf("swapped = %v value = %+v ok = %v\n", swapped, value, ok)
 
 	// Output:
-	// value = "one" ok = true
-	// value = "" ok = false
-	// swapped = true value = "updatedOne" ok = true
+	// alice value = {title:engineer age:25} ok = true
+	// alice title = "engineer"
+	// bob value = {title:manager age:35} ok = true
+	// bob age = 35
+	// swapped = true value = {title:manager age:25} ok = true
 }
 
 func TestLoad(t *testing.T) {
