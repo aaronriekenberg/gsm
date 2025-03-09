@@ -4,7 +4,7 @@ Enhanced version of Go's [sync.Map](https://pkg.go.dev/sync#Map) with generic ty
 
 ## Example:
 
-```
+```go
 package main
 
 import (
