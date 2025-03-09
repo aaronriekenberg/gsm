@@ -40,12 +40,16 @@ func ExampleGenericSyncMap() {
 	value, ok = gsm.Load("alice")
 	fmt.Printf("swapped = %v value = %+v ok = %v\n", swapped, value, ok)
 
+	keys := slices.Sorted(gsm.Keys())
+	fmt.Printf("keys = %v", keys)
+
 	// Output:
 	// alice value = {title:engineer age:25} ok = true
 	// alice title = "engineer"
 	// bob value = {title:manager age:35} ok = true
 	// bob age = 35
 	// swapped = true value = {title:manager age:25} ok = true
+	// keys = [alice bob]
 }
 
 func TestLoad(t *testing.T) {
