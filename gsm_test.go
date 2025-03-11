@@ -19,28 +19,28 @@ func ExampleGenericSyncMap() {
 		age   int
 	}
 
-	var gsm gsm.GenericSyncMap[name, person]
+	nameToPerson := gsm.GenericSyncMap[name, person]{}
 
-	gsm.Store("alice", person{title: "engineer", age: 25})
-	gsm.Store("bob", person{title: "manager", age: 35})
+	nameToPerson.Store("alice", person{title: "engineer", age: 25})
+	nameToPerson.Store("bob", person{title: "manager", age: 35})
 
-	value, ok := gsm.Load("alice")
+	value, ok := nameToPerson.Load("alice")
 	fmt.Printf("alice value = %+v ok = %v\n", value, ok)
 	fmt.Printf("alice title = %q\n", value.title)
 
-	value, ok = gsm.Load("bob")
+	value, ok = nameToPerson.Load("bob")
 	fmt.Printf("bob value = %+v ok = %v\n", value, ok)
 	fmt.Printf("bob age = %v\n", value.age)
 
-	swapped := gsm.CompareAndSwap(
+	swapped := nameToPerson.CompareAndSwap(
 		"alice",
 		person{title: "engineer", age: 25},
 		person{title: "manager", age: 25},
 	)
-	value, ok = gsm.Load("alice")
+	value, ok = nameToPerson.Load("alice")
 	fmt.Printf("swapped = %v value = %+v ok = %v\n", swapped, value, ok)
 
-	keys := slices.Sorted(gsm.Keys())
+	keys := slices.Sorted(nameToPerson.Keys())
 	fmt.Printf("keys = %v", keys)
 
 	// Output:
