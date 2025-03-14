@@ -66,11 +66,11 @@ func TestLoad(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			value, ok := gsm.Load(tc.key)
+			value, ok := m.Load(tc.key)
 
 			diff := cmp.Diff(tc.wantValue, value)
 			if diff != "" {
@@ -98,13 +98,13 @@ func TestClear(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			gsm.Clear()
+			m.Clear()
 
-			value, ok := gsm.Load(tc.key)
+			value, ok := m.Load(tc.key)
 
 			diff := cmp.Diff(tc.wantValue, value)
 			if diff != "" {
@@ -136,11 +136,11 @@ func TestLoadOrStore(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			actual, loaded := gsm.LoadOrStore(tc.key, tc.value)
+			actual, loaded := m.LoadOrStore(tc.key, tc.value)
 
 			diff := cmp.Diff(tc.wantActual, actual)
 			if diff != "" {
@@ -152,7 +152,7 @@ func TestLoadOrStore(t *testing.T) {
 				t.Fatal(diff)
 			}
 
-			afterLoadOrStoreValue, afterLoadOrStoreLoadOK := gsm.Load(tc.key)
+			afterLoadOrStoreValue, afterLoadOrStoreLoadOK := m.Load(tc.key)
 
 			diff = cmp.Diff(tc.afterLoadOrStoreValue, afterLoadOrStoreValue)
 			if diff != "" {
@@ -184,11 +184,11 @@ func TestLoadAndDelete(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			value, loaded := gsm.LoadAndDelete(tc.key)
+			value, loaded := m.LoadAndDelete(tc.key)
 
 			diff := cmp.Diff(tc.wantValue, value)
 			if diff != "" {
@@ -200,7 +200,7 @@ func TestLoadAndDelete(t *testing.T) {
 				t.Fatal(diff)
 			}
 
-			afterDeleteValue, afterDeleteLoadOK := gsm.Load(tc.key)
+			afterDeleteValue, afterDeleteLoadOK := m.Load(tc.key)
 
 			diff = cmp.Diff(tc.afterDeleteValue, afterDeleteValue)
 			if diff != "" {
@@ -225,17 +225,17 @@ func TestDelete(t *testing.T) {
 		afterDeleteValue  string
 		afterDeleteLoadOK bool
 	}{
-		"first load": {key: 1, initialValue: "one", initialLoadOK: true, afterDeleteValue: "", afterDeleteLoadOK: false},
+		"test delete": {key: 1, initialValue: "one", initialLoadOK: true, afterDeleteValue: "", afterDeleteLoadOK: false},
 	}
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			value, ok := gsm.Load(tc.key)
+			value, ok := m.Load(tc.key)
 
 			diff := cmp.Diff(tc.initialValue, value)
 			if diff != "" {
@@ -247,9 +247,9 @@ func TestDelete(t *testing.T) {
 				t.Fatal(diff)
 			}
 
-			gsm.Delete(tc.key)
+			m.Delete(tc.key)
 
-			afterDeleteValue, afterDeleteLoadOK := gsm.Load(tc.key)
+			afterDeleteValue, afterDeleteLoadOK := m.Load(tc.key)
 
 			diff = cmp.Diff(tc.afterDeleteValue, afterDeleteValue)
 			if diff != "" {
@@ -281,11 +281,11 @@ func TestSwap(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			previous, loaded := gsm.Swap(tc.key, tc.value)
+			previous, loaded := m.Swap(tc.key, tc.value)
 
 			diff := cmp.Diff(tc.wantPrevious, previous)
 			if diff != "" {
@@ -297,7 +297,7 @@ func TestSwap(t *testing.T) {
 				t.Fatal(diff)
 			}
 
-			afterSwapValue, afterSwapLoaded := gsm.Load(tc.key)
+			afterSwapValue, afterSwapLoaded := m.Load(tc.key)
 
 			diff = cmp.Diff(tc.afterSwapValue, afterSwapValue)
 			if diff != "" {
@@ -331,18 +331,18 @@ func TestCompareAndSwap(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			swapped := gsm.CompareAndSwap(tc.key, tc.oldValue, tc.newValue)
+			swapped := m.CompareAndSwap(tc.key, tc.oldValue, tc.newValue)
 
 			diff := cmp.Diff(tc.wantSwapped, swapped)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			afterSwapValue, afterSwapLoaded := gsm.Load(tc.key)
+			afterSwapValue, afterSwapLoaded := m.Load(tc.key)
 
 			diff = cmp.Diff(tc.afterSwapValue, afterSwapValue)
 			if diff != "" {
@@ -375,18 +375,18 @@ func TestCompareAndDelete(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
+			m.Store(1, "one")
 
-			deleted := gsm.CompareAndDelete(tc.key, tc.oldValue)
+			deleted := m.CompareAndDelete(tc.key, tc.oldValue)
 
 			diff := cmp.Diff(tc.wantDeleted, deleted)
 			if diff != "" {
 				t.Fatal(diff)
 			}
 
-			afterDeleteValue, afterDeleteLoadOK := gsm.Load(tc.key)
+			afterDeleteValue, afterDeleteLoadOK := m.Load(tc.key)
 
 			diff = cmp.Diff(tc.afterDeleteValue, afterDeleteValue)
 			if diff != "" {
@@ -422,17 +422,17 @@ func TestRange(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
-			gsm.Store(2, "two")
-			gsm.Store(3, "three")
-			gsm.Store(4, "four")
-			gsm.Store(5, "five")
+			m.Store(1, "one")
+			m.Store(2, "two")
+			m.Store(3, "three")
+			m.Store(4, "four")
+			m.Store(5, "five")
 
 			rangeKVs := make(map[int]string)
 
-			for key, value := range gsm.Range() {
+			for key, value := range m.Range() {
 				rangeKVs[key] = value
 			}
 
@@ -457,17 +457,17 @@ func TestKeys(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
-			gsm.Store(2, "two")
-			gsm.Store(3, "three")
-			gsm.Store(4, "four")
-			gsm.Store(5, "five")
+			m.Store(1, "one")
+			m.Store(2, "two")
+			m.Store(3, "three")
+			m.Store(4, "four")
+			m.Store(5, "five")
 
 			var sortedKeys []int
 
-			for key := range gsm.Keys() {
+			for key := range m.Keys() {
 				sortedKeys = append(sortedKeys, key)
 			}
 
@@ -497,17 +497,17 @@ func TestValues(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 
-			var gsm gsm.GenericSyncMap[int, string]
+			var m gsm.GenericSyncMap[int, string]
 
-			gsm.Store(1, "one")
-			gsm.Store(2, "two")
-			gsm.Store(3, "three")
-			gsm.Store(4, "four")
-			gsm.Store(5, "five")
+			m.Store(1, "one")
+			m.Store(2, "two")
+			m.Store(3, "three")
+			m.Store(4, "four")
+			m.Store(5, "five")
 
 			var sortedValues []string
 
-			for key := range gsm.Values() {
+			for key := range m.Values() {
 				sortedValues = append(sortedValues, key)
 			}
 
