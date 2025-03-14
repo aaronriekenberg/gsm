@@ -465,13 +465,7 @@ func TestKeys(t *testing.T) {
 			m.Store(4, "four")
 			m.Store(5, "five")
 
-			var sortedKeys []int
-
-			for key := range m.Keys() {
-				sortedKeys = append(sortedKeys, key)
-			}
-
-			slices.Sort(sortedKeys)
+			sortedKeys := slices.Sorted(m.Keys())
 
 			diff := cmp.Diff(tc.wantSortedKeys, sortedKeys)
 			if diff != "" {
@@ -505,13 +499,7 @@ func TestValues(t *testing.T) {
 			m.Store(4, "four")
 			m.Store(5, "five")
 
-			var sortedValues []string
-
-			for key := range m.Values() {
-				sortedValues = append(sortedValues, key)
-			}
-
-			slices.Sort(sortedValues)
+			sortedValues := slices.Sorted(m.Values())
 
 			diff := cmp.Diff(tc.wantSortedValues, sortedValues)
 			if diff != "" {
