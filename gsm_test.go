@@ -2,6 +2,7 @@ package gsm_test
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"testing"
 
@@ -430,11 +431,7 @@ func TestRange(t *testing.T) {
 			m.Store(4, "four")
 			m.Store(5, "five")
 
-			rangeKVs := make(map[int]string)
-
-			for key, value := range m.Range() {
-				rangeKVs[key] = value
-			}
+			rangeKVs := maps.Collect(m.Range())
 
 			diff := cmp.Diff(tc.wantRangeKVs, rangeKVs)
 			if diff != "" {
