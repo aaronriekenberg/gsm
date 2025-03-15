@@ -7,6 +7,7 @@ Enhanced version of Go's [sync.Map](https://pkg.go.dev/sync#Map) with generic ty
 2. Iterator methods `Range()`, `Keys()`, and `Values()`
 3. [Unit tests](https://github.com/aaronriekenberg/gsm/blob/main/gsm_test.go) of every method
 4. [Documentation](https://pkg.go.dev/github.com/aaronriekenberg/gsm) including [runnable example](https://pkg.go.dev/github.com/aaronriekenberg/gsm#example-GenericSyncMap)
+5. [Benchmarks](https://github.com/aaronriekenberg/gsm/wiki/Benchmarks) comparing with sync.Map and sync.RWMutex+map
 
 ## Example:
 
