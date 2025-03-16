@@ -4,10 +4,12 @@ Enhanced version of Go's [sync.Map](https://pkg.go.dev/sync#Map) with generic ty
 
 ## Features:
 1. Wrapping of all sync.Map methods with methods having generic parameter and return types.
-2. Iterator methods `Range()`, `Keys()`, and `Values()`
-3. [Unit tests](https://github.com/aaronriekenberg/gsm/blob/main/gsm_test.go) of every method
-4. [Documentation](https://pkg.go.dev/github.com/aaronriekenberg/gsm) including [runnable example](https://pkg.go.dev/github.com/aaronriekenberg/gsm#example-GenericSyncMap)
-5. [Benchmarks](https://github.com/aaronriekenberg/gsm/wiki/Benchmarks) comparing with sync.Map and sync.RWMutex+map
+1. Iterator methods `Range()`, `Keys()`, and `Values()`
+1. [Unit tests](https://github.com/aaronriekenberg/gsm/blob/main/gsm_test.go) of every method
+1. [Documentation](https://pkg.go.dev/github.com/aaronriekenberg/gsm) including [runnable example](https://pkg.go.dev/github.com/aaronriekenberg/gsm#example-GenericSyncMap)
+1. Very fast, on Apple M2 in parallel load test.  See [benchmarks for more details](#benchmarks):
+    1. Adds 0.1 nanoseconds overhead vs `sync.Map`
+    1. 60x faster than `sync.RWMutex.RLock` and builtin go map
 
 ## Example:
 
@@ -67,3 +69,16 @@ swapped = true value = {title:manager age:25} ok = true
 keys = [alice bob]
 ```
 
+## Benchmarks:
+
+```
+$ go test -bench=. -benchmem ./...
+
+goos: darwin
+goarch: arm64
+pkg: github.com/aaronriekenberg/gsm
+cpu: Apple M2
+BenchmarkSyncMapParallelLoad-8          	769333302	         1.428 ns/op	       0 B/op	       0 allocs/op
+BenchmarkGenericSyncMapParallelLoad-8   	758809900	         1.588 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRWMutexMapParallelLoad-8       	12766698	        96.07 ns/op	      63 B/op	       1 allocs/op
+```
