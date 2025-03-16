@@ -7,7 +7,7 @@ Enhanced version of Go's [sync.Map](https://pkg.go.dev/sync#Map) with generic ty
 1. Iterator methods `Range()`, `Keys()`, and `Values()`
 1. [Unit tests](https://github.com/aaronriekenberg/gsm/blob/main/gsm_test.go) of every method
 1. [Documentation](https://pkg.go.dev/github.com/aaronriekenberg/gsm) including [runnable example](https://pkg.go.dev/github.com/aaronriekenberg/gsm#example-GenericSyncMap)
-1. Very fast, on Apple M2 in [parallel](https://pkg.go.dev/testing#B.RunParallel) load benchmarks:
+1. Very fast, on Apple M2 in [parallel](https://pkg.go.dev/testing#B.RunParallel) `Load()` benchmarks:
     1. Adds 0.1 nanoseconds overhead vs `sync.Map`
     1. 60x faster than `sync.RWMutex.RLock` and builtin go map
     1. See [benchmarks for raw output](#benchmarks)
