@@ -1,5 +1,7 @@
 # gsm
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/aaronriekenberg/gsm.svg)](https://pkg.go.dev/github.com/aaronriekenberg/gsm)
+
 Enhanced version of Go's [sync.Map](https://pkg.go.dev/sync#Map) with generic types and iterators.
 
 ## Features:
