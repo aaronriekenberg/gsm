@@ -15,9 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: go version
-        run: go version
-
       - name: Build
         run: go build -v ./...
 
